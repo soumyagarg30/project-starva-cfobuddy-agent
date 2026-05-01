@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Starva — Financial Systems for Future Cities</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://code.iconify.design/iconify-icon/2.0.0/iconify-icon.min.js"></script>
+
+<style>
+
+/* Animated grid background */
+
+body{
+background:radial-gradient(circle at top,#0f172a 0,#020617 55%,#000 100%);
+color:white;
+font-family:system-ui;
+overflow-x:hidden;
+}
+
+.grid-bg{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background-image:
+linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+background-size:60px 60px;
+animation:moveGrid 25s linear infinite;
+z-index:-1;
+}
+
+@keyframes moveGrid{
+0%{transform:translateY(0)}
+100%{transform:translateY(60px)}
+}
+
+.glass{
+background:linear-gradient(135deg,rgba(15,23,42,0.9),rgba(15,23,42,0.6));
+backdrop-filter:blur(12px);
+border:1px solid rgba(255,255,255,0.06);
+}
+
+.glow{
+box-shadow:0 0 50px rgba(56,189,248,0.2);
+}
+
+.gradient-text{
+background:linear-gradient(90deg,#38bdf8,#818cf8);
+-webkit-background-clip:text;
+color:transparent;
+}
+
+.card{
+transition:all 0.3s ease;
+}
+
+.card:hover{
+transform:translateY(-5px);
+box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+
+.section-shell{
+position:relative;
+}
+
+.section-shell::before{
+content:"";
+position:absolute;
+inset:0;
+border-radius:1.75rem;
+padding:1px;
+background:linear-gradient(90deg,rgba(56,189,248,0.4),rgba(129,140,248,0.4),rgba(56,189,248,0.1));
+mask:linear-gradient(#000,#000) content-box,linear-gradient(#000,#000);
+mask-composite:exclude;
+pointer-events:none;
+}
+
+.icon-circle{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+width:40px;
+height:40px;
+border-radius:999px;
+background:radial-gradient(circle at 30% 0,#38bdf8,#1d4ed8);
+box-shadow:0 0 30px rgba(56,189,248,0.5),0 0 50px rgba(56,189,248,0.25);
+}
+
+.icon-circle iconify-icon,
+.icon-circle svg{
+width:22px;
+height:22px;
+}
+
+/* Hero Icons glow – use .icon-glow on icon containers */
+.icon-glow,
+.icon-circle iconify-icon{
+filter:drop-shadow(0 0 6px rgba(56,189,248,0.6)) drop-shadow(0 0 12px rgba(56,189,248,0.35));
+}
+.section-label .icon-glow{
+filter:drop-shadow(0 0 4px rgba(56,189,248,0.5)) drop-shadow(0 0 8px rgba(56,189,248,0.25));
+}
+.sim-outcome[data-state="risk"] .outcome-icon iconify-icon{
+filter:drop-shadow(0 0 6px rgba(248,113,113,0.6)) drop-shadow(0 0 10px rgba(248,113,113,0.35));
+}
+.sim-outcome[data-state="balanced"] .outcome-icon iconify-icon{
+filter:drop-shadow(0 0 6px rgba(56,189,248,0.6)) drop-shadow(0 0 10px rgba(56,189,248,0.35));
+}
+.sim-outcome[data-state="expansion"] .outcome-icon iconify-icon{
+filter:drop-shadow(0 0 6px rgba(74,222,128,0.6)) drop-shadow(0 0 10px rgba(74,222,128,0.35));
+}
+
+.section-label{
+display:inline-flex;
+align-items:center;
+gap:0.5rem;
+padding:0.25rem 0.75rem;
+border-radius:999px;
+background:rgba(15,23,42,0.9);
+border:1px solid rgba(148,163,184,0.4);
+color:#e5e7eb;
+font-size:0.75rem;
+letter-spacing:0.08em;
+text-transform:uppercase;
+}
+
+/* Simulation outcome pills + icons */
+.sim-outcome{
+display:inline-flex;
+align-items:center;
+gap:0.75rem;
+padding:0.875rem 1.25rem;
+border-radius:1rem;
+font-size:1rem;
+font-weight:600;
+transition:all 0.35s cubic-bezier(0.4,0,0.2,1);
+border:1px solid transparent;
+}
+.sim-outcome .outcome-icon{
+flex-shrink:0;
+width:28px;
+height:28px;
+transition:transform 0.3s ease;
+}
+.sim-outcome.active .outcome-icon{
+transform:scale(1.1);
+}
+.sim-outcome[data-state="risk"]{
+background:rgba(248,113,113,0.12);
+border-color:rgba(248,113,113,0.35);
+color:#fca5a5;
+}
+.sim-outcome[data-state="balanced"]{
+background:rgba(56,189,248,0.12);
+border-color:rgba(56,189,248,0.35);
+color:#7dd3fc;
+}
+.sim-outcome[data-state="expansion"]{
+background:rgba(74,222,128,0.12);
+border-color:rgba(74,222,128,0.35);
+color:#86efac;
+}
+.sim-outcome:not(.active){
+opacity:0.5;
+transform:scale(0.96);
+}
+
+/* Modern range slider */
+.sim-slider-wrap{
+position:relative;
+padding:0.5rem 0;
+}
+.sim-slider-wrap input[type="range"]{
+-webkit-appearance:none;
+appearance:none;
+width:100%;
+height:10px;
+border-radius:999px;
+background:linear-gradient(90deg,rgba(248,113,113,0.3),rgba(56,189,248,0.4),rgba(74,222,128,0.4));
+outline:none;
+}
+.sim-slider-wrap input[type="range"]::-webkit-slider-thumb{
+-webkit-appearance:none;
+appearance:none;
+width:24px;
+height:24px;
+border-radius:50%;
+background:linear-gradient(135deg,#38bdf8,#6366f1);
+box-shadow:0 0 0 4px rgba(15,23,42,0.9),0 4px 12px rgba(56,189,248,0.4);
+cursor:grab;
+transition:transform 0.2s ease, box-shadow 0.2s ease;
+}
+.sim-slider-wrap input[type="range"]::-webkit-slider-thumb:hover{
+transform:scale(1.08);
+box-shadow:0 0 0 4px rgba(15,23,42,0.9),0 6px 20px rgba(56,189,248,0.5);
+}
+.sim-slider-wrap input[type="range"]::-moz-range-thumb{
+width:24px;
+height:24px;
+border-radius:50%;
+border:none;
+background:linear-gradient(135deg,#38bdf8,#6366f1);
+box-shadow:0 0 0 4px rgba(15,23,42,0.9),0 4px 12px rgba(56,189,248,0.4);
+cursor:grab;
+transition:transform 0.2s ease, box-shadow 0.2s ease;
+}
+.sim-slider-wrap input[type="range"]::-moz-range-thumb:hover{
+transform:scale(1.08);
+}
+
+/* Scroll animation */
+
+.fade{
+opacity:0;
+transform:translateY(40px);
+transition:all 1s ease;
+}
+
+.fade.show{
+opacity:1;
+transform:translateY(0);
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- NAVBAR -->
+
+<header class="max-w-7xl mx-auto flex justify-between items-center p-6">
+
+<div class="flex items-center gap-3">
+<div class="icon-circle">
+<iconify-icon icon="heroicons:sparkles" width="22" height="22" style="color:white"></iconify-icon>
+</div>
+<div>
+<h1 class="text-2xl font-bold gradient-text">Starva</h1>
+<p class="text-xs text-slate-400 uppercase tracking-[0.18em]">Financial OS for cities</p>
+</div>
+</div>
+
+<nav class="hidden md:flex items-center gap-8 text-slate-300 text-sm">
+<a href="#vision" class="hover:text-white">Vision</a>
+<a href="#platform" class="hover:text-white">Platform</a>
+<a href="#agents" class="hover:text-white">AI Agents</a>
+<a href="#simulation" class="hover:text-white">Simulation</a>
+</nav>
+
+</header>
+
+
+
+<!-- HERO -->
+
+<section class="text-center py-20 md:py-28 px-6">
+
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-sky-500/40 bg-sky-500/5 text-xs text-sky-200 mb-6 fade">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+Live sandbox for capital design
+</div>
+
+<h1 class="text-4xl md:text-6xl font-bold leading-tight fade">
+
+<span class="gradient-text">
+
+Design the Financial Systems
+
+</span>
+
+<br>
+
+of Future Cities
+
+</h1>
+
+<p class="text-slate-400 mt-6 max-w-2xl mx-auto fade">
+
+Starva is an AI-native collaboration platform where governments,
+companies, investors and citizens co-design infrastructure,
+allocate capital and forecast impact before a single rupee is spent.
+
+</p>
+
+<div class="mt-10 flex flex-col sm:flex-row justify-center gap-4 sm:gap-6 fade">
+
+<button class="px-7 py-3.5 bg-gradient-to-r from-sky-500 via-cyan-400 to-indigo-500 rounded-xl glow text-sm font-medium">
+Launch City Workspace
+</button>
+
+<button class="px-7 py-3.5 border border-slate-600/80 rounded-xl text-sm font-medium flex items-center justify-center gap-2 bg-slate-950/40">
+<span>Read Vision Memo</span>
+<span class="text-xs text-slate-400">5 min</span>
+</button>
+
+</div>
+
+</section>
+
+
+
+<!-- VISION -->
+
+<section id="vision" class="max-w-5xl mx-auto px-6 py-20 md:py-24 text-center fade section-shell">
+
+<div class="relative z-10 py-10 md:py-14 px-4 md:px-10">
+
+<div class="mb-5 flex justify-center">
+<span class="section-label">
+<iconify-icon icon="heroicons:pencil-square" class="icon-glow w-4 h-4 text-sky-400"></iconify-icon>
+System-level view
+</span>
+</div>
+
+<h2 class="text-3xl font-semibold mb-4">
+
+Cities are Financial Systems
+
+</h2>
+
+<p class="text-slate-400 text-lg leading-relaxed max-w-3xl mx-auto">
+
+Every city is a complex financial engine. Infrastructure, housing, energy and transport
+are all capital flows running through one shared ledger. Starva lets you see this system
+as a live balance sheet, then stress-test it with AI before policy or capital moves.
+
+</p>
+
+</div>
+
+</section>
+
+
+
+<!-- PLATFORM -->
+
+<section id="platform" class="max-w-6xl mx-auto px-6 py-20 md:py-24 fade section-shell">
+
+<div class="relative z-10 py-10 md:py-14 px-4 md:px-10">
+
+<div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-10">
+<div class="space-y-3">
+<span class="section-label">
+<iconify-icon icon="heroicons:chart-bar-square" class="icon-glow w-4 h-4 text-sky-400"></iconify-icon>
+Platform capabilities
+</span>
+<h2 class="text-3xl font-semibold">
+
+Instrument the city like a balance sheet
+
+</h2>
+</div>
+<p class="text-slate-400 text-sm max-w-md">
+Each module is an AI agent tuned to real-world city finance: from macro strategy to project-level breakeven.
+</p>
+</div>
+
+<div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+
+<div class="glass card p-6 rounded-xl glow flex flex-col gap-3">
+<div class="icon-circle mb-2">
+<iconify-icon icon="heroicons:building-office-2" width="22" height="22" style="color:white"></iconify-icon>
+</div>
+<h3 class="font-semibold">Financial Strategist</h3>
+<p class="text-slate-400 text-sm">
+
+AI financial modeling and macroeconomic simulation across 10–20 year horizons.
+
+</p>
+</div>
+
+
+<div class="glass card p-6 rounded-xl glow flex flex-col gap-3">
+<div class="icon-circle mb-2">
+<iconify-icon icon="heroicons:banknotes" width="22" height="22" style="color:white"></iconify-icon>
+</div>
+<h3 class="font-semibold">Capital Allocator</h3>
+<p class="text-slate-400 text-sm">
+
+Optimize budgets across infrastructure portfolios, with trade-offs explained in plain language.
+
+</p>
+</div>
+
+
+<div class="glass card p-6 rounded-xl glow flex flex-col gap-3">
+<div class="icon-circle mb-2">
+<iconify-icon icon="heroicons:shield-check" width="22" height="22" style="color:white"></iconify-icon>
+</div>
+<h3 class="font-semibold">Risk Manager</h3>
+<p class="text-slate-400 text-sm">
+
+Detect economic stress and infrastructure risk early with scenario dashboards.
+
+</p>
+</div>
+
+
+<div class="glass card p-6 rounded-xl glow flex flex-col gap-3">
+<div class="icon-circle mb-2">
+<iconify-icon icon="heroicons:map" width="22" height="22" style="color:white"></iconify-icon>
+</div>
+<h3 class="font-semibold">City Planning AI</h3>
+<p class="text-slate-400 text-sm">
+
+Evaluate project pipelines, payback period and breakeven timelines in rupees.
+
+</p>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- AI AGENT ARCHITECTURE -->
+
+<section id="agents" class="max-w-6xl mx-auto px-6 py-20 md:py-24 fade section-shell">
+
+<div class="relative z-10 py-10 md:py-14 px-4 md:px-10">
+
+<div class="flex flex-col items-center text-center mb-10">
+<span class="section-label mb-4">
+<iconify-icon icon="heroicons:cpu-chip" class="icon-glow w-4 h-4 text-sky-400"></iconify-icon>
+Multi-agent system
+</span>
+<h2 class="text-3xl font-semibold mb-3">
+
+AI Agent Architecture
+
+</h2>
+<p class="text-slate-400 text-sm max-w-2xl">
+Composable agents that monitor, propose and challenge each other before recommendations reach humans.
+</p>
+</div>
+
+<div class="grid md:grid-cols-3 gap-6 text-left md:text-center">
+
+<div class="glass p-6 rounded-xl flex flex-col gap-3">
+<div class="icon-circle mx-auto md:mx-auto">
+<iconify-icon icon="heroicons:eye" width="22" height="22" style="color:white"></iconify-icon>
+</div>
+<h3 class="font-semibold mt-1 text-center">Monitoring Agent</h3>
+<p class="text-slate-400 text-sm text-center md:text-center">
+
+Tracks macro signals, project KPI streams and infra telemetry in one place.
+
+</p>
+</div>
+
+
+<div class="glass p-6 rounded-xl flex flex-col gap-3">
+<div class="icon-circle mx-auto md:mx-auto">
+<iconify-icon icon="heroicons:light-bulb" width="22" height="22" style="color:white"></iconify-icon>
+</div>
+<h3 class="font-semibold mt-1 text-center">Strategy Agent</h3>
+<p class="text-slate-400 text-sm text-center md:text-center">
+
+Simulates capital allocation, policy choices and their impact on rupee flows.
+
+</p>
+</div>
+
+
+<div class="glass p-6 rounded-xl flex flex-col gap-3">
+<div class="icon-circle mx-auto md:mx-auto">
+<iconify-icon icon="heroicons:exclamation-triangle" width="22" height="22" style="color:white"></iconify-icon>
+</div>
+<h3 class="font-semibold mt-1 text-center">Risk Agent</h3>
+<p class="text-slate-400 text-sm text-center md:text-center">
+
+Identifies economic and operational risks, surfacing early-warning alerts.
+
+</p>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- INTERACTIVE SIMULATION -->
+
+<section id="simulation" class="max-w-5xl mx-auto px-6 py-20 md:py-24 text-center fade section-shell">
+
+<div class="relative z-10 py-10 md:py-14 px-4 md:px-10">
+
+<div class="mb-5 flex justify-center">
+<span class="section-label">
+<iconify-icon icon="heroicons:arrow-trending-up" class="icon-glow w-4 h-4 text-sky-400"></iconify-icon>
+Investment sandbox
+</span>
+</div>
+
+<h2 class="text-3xl font-semibold mb-4">
+
+City Simulation
+
+</h2>
+
+<p class="text-slate-400 mb-10 max-w-xl mx-auto">
+
+Adjust annual capital investment to see how rupee flows translate into growth,
+risk and capacity for the next decade.
+
+</p>
+
+<div class="glass p-8 md:p-10 rounded-2xl text-left md:text-center">
+
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+<p class="text-sm text-slate-300">Annual capital deployed</p>
+<div class="text-right">
+<div id="investmentLabel" class="text-2xl font-semibold text-sky-400 tabular-nums">
+₹5,000 Cr
+</div>
+<p class="text-xs text-slate-500">Nominal, city-wide</p>
+</div>
+</div>
+
+<div class="sim-slider-wrap mb-2">
+<input type="range" id="capitalSlider" min="0" max="100" value="50"
+class="w-full"
+oninput="updateSimulation(this.value)">
+</div>
+<div class="flex justify-between text-xs text-slate-500 mb-8">
+<span>₹0 Cr</span>
+<span>₹5,000 Cr</span>
+<span>₹10,000 Cr</span>
+</div>
+
+<div class="flex flex-wrap justify-center gap-3" id="outcomePills" role="status" aria-live="polite">
+<div class="sim-outcome" data-state="risk" id="outcome-risk">
+<span class="outcome-icon" aria-hidden="true">
+<iconify-icon icon="heroicons:exclamation-triangle" width="28" height="28"></iconify-icon>
+</span>
+<span>Underinvestment Risk</span>
+</div>
+<div class="sim-outcome active" data-state="balanced" id="outcome-balanced">
+<span class="outcome-icon" aria-hidden="true">
+<iconify-icon icon="heroicons:scale" width="28" height="28"></iconify-icon>
+</span>
+<span>Balanced Growth</span>
+</div>
+<div class="sim-outcome" data-state="expansion" id="outcome-expansion">
+<span class="outcome-icon" aria-hidden="true">
+<iconify-icon icon="heroicons:arrow-trending-up" width="28" height="28"></iconify-icon>
+</span>
+<span>Rapid Expansion</span>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+
+<!-- FOOTER -->
+
+<footer class="text-center text-slate-500 py-12 border-t border-slate-800">
+
+Starva • Designing the economic systems of future cities
+
+</footer>
+
+
+
+<script>
+
+/* scroll animation */
+
+const observer = new IntersectionObserver(entries=>{
+entries.forEach(entry=>{
+if(entry.isIntersecting){
+entry.target.classList.add("show")
+}
+})
+})
+
+document.querySelectorAll(".fade").forEach(el=>{
+observer.observe(el)
+})
+
+
+/* simulation */
+
+function updateSimulation(value){
+const investmentLabel = document.getElementById("investmentLabel")
+const pills = { risk: document.getElementById("outcome-risk"), balanced: document.getElementById("outcome-balanced"), expansion: document.getElementById("outcome-expansion") }
+
+// Map 0–100 slider to ₹0–10,000 Cr
+const minCr = 0
+const maxCr = 10000
+const amountCr = Math.round(minCr + ((maxCr - minCr) * (value / 100)))
+const formatted = amountCr.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+investmentLabel.innerText = `₹${formatted} Cr`
+
+// Activate the pill + icon for current state
+let activeId = "balanced"
+if(Number(value) < 30) activeId = "risk"
+else if(Number(value) >= 70) activeId = "expansion"
+
+Object.keys(pills).forEach(state => {
+pills[state].classList.toggle("active", state === activeId)
+})
+}
+
+</script>
+
+</body>
+</html>

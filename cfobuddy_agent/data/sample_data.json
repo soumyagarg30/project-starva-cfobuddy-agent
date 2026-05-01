@@ -1,0 +1,58 @@
+{
+  "cash": {
+    "cash_in_storage": 1200000,
+    "monthly_usage": 250000
+  },
+  "zones": [
+    {
+      "zone": "Zone A",
+      "packing_delay_minutes": 2.2,
+      "congestion": "LOW",
+      "queue_depth": 6
+    },
+    {
+      "zone": "Zone B",
+      "packing_delay_minutes": 5.8,
+      "congestion": "MEDIUM",
+      "queue_depth": 14
+    }
+  ],
+  "orders": [
+    {
+      "order_id": "O-001",
+      "aov": 320,
+      "discount": 20,
+      "cogs": 130,
+      "delivery_cost": 35,
+      "platform_fee_pct": 0.02,
+      "dark_store_overhead": 18
+    },
+    {
+      "order_id": "O-002",
+      "aov": 410,
+      "discount": 45,
+      "cogs": 140,
+      "delivery_cost": 42,
+      "platform_fee_pct": 0.02,
+      "dark_store_overhead": 22
+    },
+    {
+      "order_id": "O-003",
+      "aov": 290,
+      "discount": 25,
+      "cogs": 120,
+      "delivery_cost": 33,
+      "platform_fee_pct": 0.02,
+      "dark_store_overhead": 20
+    },
+    {
+      "order_id": "O-004",
+      "aov": 520,
+      "discount": 55,
+      "cogs": 220,
+      "delivery_cost": 45,
+      "platform_fee_pct": 0.025,
+      "dark_store_overhead": 28
+    }
+  ]
+}
